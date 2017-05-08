@@ -1,7 +1,7 @@
 import bluetooth
 import sys
 
-sock=bluetooth.BluetoothSocket(bluetooth.RFCOMM)
+sock=bluetooth.BluetoothSocket(bluetooth.L2CAP)
 
 bd_addr = "7C:BB:8A:B8:8A:43"
 
@@ -12,14 +12,19 @@ if len(service_matches) == 0:
     sys.exit(0)
 
 for sm in service_matches:
-    print "Got service:\n\t{}\n\t{}\n\t".format(sm["port"], sm["name"], sm["host"])
+    print "Got service:\n\tport: {}\n\tname: {}\n\thost: ".format(sm["port"], sm["name"], sm["host"])
+    port = sm['port']
 
-port = bluetooth.get_available_port( bluetooth.RFCOMM )
 print "Got port: {}".format(port)
 
 sock.connect((bd_addr, port))
 
-sock.send(0x01)
+print 'Connected'
+
+command = bytearray(1)
+command[0] = 0x01
+
+sock.send("1")
 
 data = sock.recv(1024)
 print "received [%s]" % data
