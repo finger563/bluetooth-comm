@@ -21,12 +21,9 @@ sock.connect((bd_addr, port))
 
 print 'Connected'
 
-command = bytearray(1)
-command[0] = 0x01
-
-sock.send("1")
+sock.send("\x08\x00\x92\x00\x01\x1F")
 
 data = sock.recv(1024)
-print "received [%s]" % data
+print "received : " + ' '.join('{:02x}'.format(ord(x)) for x in data)
 
 sock.close()
