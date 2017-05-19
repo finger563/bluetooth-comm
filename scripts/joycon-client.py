@@ -14,8 +14,10 @@ sock=bluetooth.BluetoothSocket(bluetooth.L2CAP)
 jcL = "98:B6:E9:8B:78:B9"
 jcR = "7C:BB:8A:B8:8A:43"
 
-bd_addr = "7C:BB:8A:B8:8A:43"
+bd_addr = jcR
+port = 1
 
+'''
 service_matches = bluetooth.find_service()
 
 if len(service_matches) == 0:
@@ -27,12 +29,21 @@ for sm in service_matches:
     port = sm['port']
 
 print "Got port: {}".format(port)
+'''
 
 sock.connect((bd_addr, port))
 
 print 'Connected'
 
 commands = [
+    # service search attribute request
+    "\x06\x00\x00\x00\x0d\x35\x03\x19\x11\x24\x00\x0f\x35\x03\x09\x02\x02\x00",
+    # testing
+    "\x80\x01\xA2\x12\x00\x01\x1F",
+    "\x80\x01\xA2\x15\x00\x01\x1F",
+]
+'''
+    "\x80\x92\x00\x01\x00\x00\x00\x00\x1F",
     "\x80\x01\x00\x01\x1F",
     "\x80\x02\x00\x01\x1F",
     "\x80\x03\x00\x01\x1F",
@@ -40,7 +51,8 @@ commands = [
     "\x08\x00\x92\x00\x01\x1F",
     "\x08\x00\x92\x00\x01\x1F",
     "\x08\x00\x92\x00\x01\x1F",
-    ]
+    "\x19\x01\x03\x08\x00\x92\x00\x01\x00\x00\x00\x2D\x1F"
+'''
 
 for command in commands:
     print "\nsent : " + hexString(command)
