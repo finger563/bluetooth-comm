@@ -15,7 +15,7 @@ sock=bluetooth.BluetoothSocket(bluetooth.L2CAP)
 jcL = "98:B6:E9:8B:78:B9"
 jcR = "7C:BB:8A:B8:8A:43"
 
-if sys.argv[1] and sys.argv[1] == 'left':
+if len(sys.argv) > 1 and sys.argv[1] == 'left':
     bd_addr = jcL
 else:
     bd_addr = jcR
@@ -44,6 +44,7 @@ commands = [
     # service search attribute request
     "\x06\x00\x00\x00\x0d\x35\x03\x19\x11\x24\x00\x0f\x35\x03\x09\x02\x02\x00",
     # testing
+    "\x19\x01\x03\x08\x00\x92\x00\x01\x00\x00\x69\x2d\x1f"
 ]
 '''
     "\x80\x01\xA2\x12\x00\x01\x1F",
