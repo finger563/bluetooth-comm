@@ -1,0 +1,25 @@
+jeb@ubuntu:~/repositories/bluetooth-comm/scripts$ python sdp-browse.py 7C:BB:8A:B8:8A:43
+found 1 services on 7C:BB:8A:B8:8A:43
+
+Service Name: Wireless Gamepad
+    Host:        7C:BB:8A:B8:8A:43
+    Description: Gamepad
+    Provided By: None
+    Protocol:    L2CAP
+    channel/PSM: 1
+    svc classes: ['1000'] 
+    profiles:    [('0100', 256)] 
+    service id:  None 
+
+jeb@ubuntu:~/repositories/bluetooth-comm/scripts$ python sdp-browse.py 98:B6:E9:8B:78:B9
+found 1 services on 98:B6:E9:8B:78:B9
+
+Service Name: Wireless Gamepad
+    Host:        98:B6:E9:8B:78:B9
+    Description: Gamepad
+    Provided By: None
+    Protocol:    L2CAP
+    channel/PSM: 1
+    svc classes: ['1000'] 
+    profiles:    [('0100', 256)] 
+    service id:  None 
