@@ -94,10 +94,16 @@ LOG FROM SUCCESSFUL CONNECTION TO JOYCON AND HANDSHAKING TO GET DATA:
 # RECV Configure response success (SCID 0x0041)
 05 03 06 00 41 00 00 00 00 00
 
-# RECV DATA - Input - uknown type
+# RECV DATA - Input - unknown type
 a1 3f 00 00 05 00 80 00 80 00 80 00 80
-# RECV DATA - Input - uknown type
+# RECV DATA - Input - unknown type
 a1 3f 00 00 08 00 80 00 80 00 80 00 80
+
+# SENT DATA - Output - Keyboard - LEDS: none
+A2 01 00
+
+# RECV DATA - Input - unknown type
+a1 21 b5 8e ......
 '''
 
 
