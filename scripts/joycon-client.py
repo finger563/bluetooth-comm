@@ -65,6 +65,43 @@ commands = [
     "\x06\x00\x0A\x00\x11\x35\x03\x19\x11\x24\xff\xff\x35\x05\x0a\x00\x00\xff\xff\x02\x01\x7C",
 ]
 '''
+LOG FROM SUCCESSFUL CONNECTION TO JOYCON AND HANDSHAKING TO GET DATA:
+
+# RECV Conn request (HID-Control, SCID 0x0040)
+02 02 04 00 11 00 40 00
+# SEND Conn response - success (SCID 0x0040 DCID 0x0040)
+03 02 08 00 40 00 40 00 00 00 00
+# SEND Configure request (DCID 0x0040)
+04 02 04 00 40 00 00 00
+# RECV Configure request (DCID 0x0040)   ## MTU (0x01) to 800 (0x0320)
+04 03 08 00 40 00 00 00 01 02 20 03
+# SENT Configure response success (SCID 0x0040)
+05 03 0a 00 40 00 00 00 00 00 01 02 20 03
+# RECV Configure response success (SCID 0x0040)
+05 02 06 00 40 00 00 00 00 00
+# RECV Connection request (HID-interrupt, SCID 0x0041)
+02 04 04 00 13 00 41 00
+# SENT Conn response pending (SCID 0x0041)
+03 04 08 00 41 00 41 00 01 00 02 00
+# SENT Conn response success (SCID 0x0041, DCID 0x0041)
+03 04 08 00 41 00 41 00 00 00 00 00
+# SENT Configure request (DCID 0x0041)
+04 03 04 00 41 00 00 00
+# RECV Configure request (DCID 0x0041)  ## MTU (0x01) to 800 (0x0320)
+04 05 08 00 41 00 00 00 01 02 20 03
+# SENT Configure response success (SCID 0x0041)
+05 05 0a 00 41 00 00 00 00 00 01 02 20 03
+# RECV Configure response success (SCID 0x0041)
+05 03 06 00 41 00 00 00 00 00
+
+# RECV DATA - Input - uknown type
+a1 3f 00 00 05 00 80 00 80 00 80 00 80
+# RECV DATA - Input - uknown type
+a1 3f 00 00 08 00 80 00 80 00 80 00 80
+'''
+
+
+'''
     # Connection request
     "\x02\x48\x04\x00\x01\x00\x42",
 
