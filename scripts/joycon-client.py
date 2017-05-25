@@ -7,11 +7,6 @@ def hexString(s, delim=' '):
 
 sock=bluetooth.BluetoothSocket(bluetooth.L2CAP)
 
-'''
-98:B6:E9:8B:78:B9	Joy-Con (L)
-7C:BB:8A:B8:8A:43	Joy-Con (R)
-'''
-
 jcL = "98:B6:E9:8B:78:B9"
 jcR = "7C:BB:8A:B8:8A:43"
 
@@ -22,23 +17,18 @@ else:
 
 port = 1 #0x1001
 
-'''
-service_matches = bluetooth.find_service()
-
-if len(service_matches) == 0:
-    print "Couldn't connect to joy-con to get services"
-    sys.exit(0)
-
-for sm in service_matches:
-    print "Got service:\n\tport: {}\n\tname: {}\n\thost: ".format(sm["port"], sm["name"], sm["host"])
-    port = sm['port']
-
-print "Got port: {}".format(port)
-'''
-
 print 'Connecting to {}'.format(bd_addr)
 sock.connect((bd_addr, port))
 print 'Connected to  {}'.format(bd_addr)
+
+def send(data):
+    print ""
+    print "sent : {}".format(hexString(data))
+    sock.send(data)
+
+def recv():
+    data = sock.recv(1024)
+    print "received : {}".format(hexString(data))
 
 commands = [
     # service search attribute request HID
@@ -64,6 +54,7 @@ commands = [
     # service search attribute request HID continuation
     "\x06\x00\x0A\x00\x11\x35\x03\x19\x11\x24\xff\xff\x35\x05\x0a\x00\x00\xff\xff\x02\x01\x7C",
 ]
+
 '''
 LOG FROM SUCCESSFUL CONNECTION TO JOYCON AND HANDSHAKING TO GET DATA:
 
@@ -108,46 +99,85 @@ a1 21 b5 8e ......
 
 
 '''
-    # Connection request
-    "\x02\x48\x04\x00\x01\x00\x42",
+# Connection request
+"\x02\x48\x04\x00\x01\x00\x42",
 
-    # info request extended features
-    "\x0a\x01\x02\x00\x02\x00",
+# info request extended features
+"\x0a\x01\x02\x00\x02\x00",
 
-    # testing HID
-    "\xa2\x01\x00",  # should be Keyboard LEDs set to 0
-    "\xa2\x01\x00",
-    "\xa2\x01\x00",
-]
-'''
+# testing HID
+"\xa2\x01\x00",  # should be Keyboard LEDs set to 0
 
-'''
-    # service search attribute request
-    "\x06\x00\x00\x00\x0d\x35\x03\x19\x11\x24\x00\x0f\x35\x03\x09\x02\x02\x00",
-
-    "\x19\x01\x03\x08\x00\x92\x00\x01\x00\x00\x69\x2d\x1f"
-
-
-    "\x80\x01\xA2\x12\x00\x01\x1F",
-    "\x80\x01\xA2\x15\x00\x01\x1F",
-
-    "\x80\x92\x00\x01\x00\x00\x00\x00\x1F",
-    "\x80\x01\x00\x01\x1F",
-    "\x80\x02\x00\x01\x1F",
-    "\x80\x03\x00\x01\x1F",
-    "\x80\x91\x01\x00\x00\x00",
-    "\x08\x00\x92\x00\x01\x1F",
-    "\x08\x00\x92\x00\x01\x1F",
-    "\x08\x00\x92\x00\x01\x1F",
-    "\x19\x01\x03\x08\x00\x92\x00\x01\x00\x00\x00\x2D\x1F"
+# service search attribute request
+"\x06\x00\x00\x00\x0d\x35\x03\x19\x11\x24\x00\x0f\x35\x03\x09\x02\x02\x00",
 '''
 
 for command in commands:
-    print ""
-    print "sent : {}".format(hexString(command))
-    sock.send(command)
-    data = sock.recv(1024)
-    print "received : {}".format(hexString(data))
+    send(command)
+    recv()
+
+# SEND Information Request (Extended Features Mask)
+send("\x0a\x01\x02\x00\x02\x00")
+
+# RECV Conn request (HID-Control, SCID 0x0040)
+"\x02\x02\x04\x00\x11\x00\x40\x00"
+recv()
+
+# SEND Conn response - success (SCID 0x0040 DCID 0x0040)
+send("\x03\x02\x08\x00\x40\x00\x40\x00\x00\x00\x00")
+
+# SEND Configure request (DCID 0x0040)
+send("\x04\x02\x04\x00\x40\x00\x00\x00")
+
+# RECV Configure request (DCID 0x0040)   ## MTU (0x01) to 800 (0x0320)
+"\x04\x03\x08\x00\x40\x00\x00\x00\x01\x02\x20\x03"
+recv()
+
+# SENT Configure response success (SCID 0x0040)
+sock.send("\x05\x03\x0a\x00\x40\x00\x00\x00\x00\x00\x01\x02\x20\x03")
+
+# RECV Configure response success (SCID 0x0040)
+"\x05\x02\x06\x00\x40\x00\x00\x00\x00\x00"
+recv()
+
+# RECV Connection request (HID-interrupt, SCID 0x0041)
+"\x02\x04\x04\x00\x13\x00\x41\x00"
+recv()
+
+# SENT Conn response pending (SCID 0x0041)
+send("\x03\x04\x08\x00\x41\x00\x41\x00\x01\x00\x02\x00")
+
+# SENT Conn response success (SCID 0x0041, DCID 0x0041)
+send("\x03\x04\x08\x00\x41\x00\x41\x00\x00\x00\x00\x00")
+
+# SENT Configure request (DCID 0x0041)
+send("\x04\x03\x04\x00\x41\x00\x00\x00")
+
+# RECV Configure request (DCID 0x0041)  ## MTU (0x01) to 800 (0x0320)
+"\x04\x05\x08\x00\x41\x00\x00\x00\x01\x02\x20\x03"
+recv()
+
+# SENT Configure response success (SCID 0x0041)
+send("\x05\x05\x0a\x00\x41\x00\x00\x00\x00\x00\x01\x02\x20\x03")
+
+# RECV Configure response success (SCID 0x0041)
+"\x05\x03\x06\x00\x41\x00\x00\x00\x00\x00"
+recv()
+
+# RECV DATA - Input - unknown type
+"\xa1\x3f\x00\x00\x05\x00\x80\x00\x80\x00\x80\x00\x80"
+recv()
+
+# RECV DATA - Input - unknown type
+"\xa1\x3f\x00\x00\x08\x00\x80\x00\x80\x00\x80\x00\x80"
+recv()
+
+# SENT DATA - Output - Keyboard - LEDS: none
+"\xA2\x01\x00"
+
+# RECV DATA - Input - unknown type
+recv()
+
 
 time.sleep(5)
 
